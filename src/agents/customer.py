@@ -2,9 +2,9 @@ from spade.agent import Agent
 from spade.behaviour import FSMBehaviour, State
 from spade.message import Message
 
-STATE_ONE = "STATE_GIVE_REQUIREMENTS"
-STATE_TWO = "STATE_GET_FLIGHT_PROPOSITION"
-STATE_THREE = "STATE_GIVE_DECISION"
+STATE_ONE = "GIVE_REQUIREMENTS_STATE"
+STATE_TWO = "GET_FLIGHT_PROPOSITION_STATE"
+STATE_THREE = "GIVE_DECISION_STATE"
 
 
 class Customer(Agent):

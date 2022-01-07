@@ -3,11 +3,6 @@ from spade.behaviour import FSMBehaviour, State
 from spade.message import Message
 
 
-STATE_ONE = "GET_FLIGHT_PARAMETERS_STATE"
-STATE_TWO = "STATE_GIVE_FLIGHT_PROPOSITION"
-STATE_THREE = "STATE_GET_DECISION"
-
-
 class Drone(Agent):
     class DroneBehaviour(FSMBehaviour):
         async def on_start(self):
