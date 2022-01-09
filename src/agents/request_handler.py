@@ -9,6 +9,7 @@ STATE_FOUR = "GIVE_FLIGHT_PROPOSITION_STATE"
 STATE_FIVE = "GET_DECISION_STATE"
 STATE_SIX = "SEND_START_RESERVATION_STATE"
 STATE_SEVEN = "SEND_END_RESERVATION_STATE"
+STATE_EIGHT = "SEND_FLIGHT_PARAMETERS_TO_DRONE_STATE"
 
 
 class RequestHandler(Agent):
@@ -86,6 +87,16 @@ class RequestHandler(Agent):
             reservation_end.body = "End station reservation"
             await self.send(reservation_end)
             print("[REQUEST_HANDLER]: End reservation sent")
+            self.set_next_state(STATE_EIGHT)
+
+    class StateEight(State):
+        async def run(self):
+            print("[REQUEST_HANDLER]: I'm at state 8")
+            flight_parameters = Message(to='AASD_DRONE@01337.io')  # wait for a message for 10 seconds
+            flight_parameters.set_metadata("performative", "inform")
+            flight_parameters.body = "Flight parameters"
+            await self.send(flight_parameters)
+            print("[REQUEST_HANDLER]: Flight parameters sent")
 
     def __init__(self, jid: str, password: str, verify_security: bool = False):
         super().__init__(jid, password, verify_security)
@@ -100,10 +111,12 @@ class RequestHandler(Agent):
         self.requestHandlerBehaviour.add_state(name=STATE_FIVE, state=self.StateFive())
         self.requestHandlerBehaviour.add_state(name=STATE_SIX, state=self.StateSix())
         self.requestHandlerBehaviour.add_state(name=STATE_SEVEN, state=self.StateSeven())
+        self.requestHandlerBehaviour.add_state(name=STATE_EIGHT, state=self.StateEight())
         self.requestHandlerBehaviour.add_transition(source=STATE_ONE, dest=STATE_TWO)
         self.requestHandlerBehaviour.add_transition(source=STATE_TWO, dest=STATE_THREE)
         self.requestHandlerBehaviour.add_transition(source=STATE_THREE, dest=STATE_FOUR)
         self.requestHandlerBehaviour.add_transition(source=STATE_FOUR, dest=STATE_FIVE)
         self.requestHandlerBehaviour.add_transition(source=STATE_FIVE, dest=STATE_SIX)
         self.requestHandlerBehaviour.add_transition(source=STATE_SIX, dest=STATE_SEVEN)
+        self.requestHandlerBehaviour.add_transition(source=STATE_SEVEN, dest=STATE_EIGHT)
         self.add_behaviour(self.requestHandlerBehaviour)
