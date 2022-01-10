@@ -1,14 +1,21 @@
 from spade.agent import Agent
 from spade.behaviour import FSMBehaviour, State
 from spade.message import Message
+import src.Messages as Messages
 
 STATE_ONE = "GIVE_REQUIREMENTS_STATE"
 STATE_TWO = "GET_FLIGHT_PROPOSITION_STATE"
 STATE_THREE = "GIVE_DECISION_STATE"
 
+STATIONS_NUMBER = 20
 
 class Customer(Agent):
+
     class CustomerBehaviour(FSMBehaviour):
+
+        def __init__(self):
+            super().__init__()
+
         async def on_start(self):
             print("[CUSTOMER]: Starting behaviour. . .")
 
@@ -20,9 +27,9 @@ class Customer(Agent):
             print("[CUSTOMER]: I'm at state 1 (initial state)")
             flight_parameters = Message(to='AASD_REQUEST_HANDLER@01337.io')
             flight_parameters.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
-            flight_parameters.body = "Flight params"
+            flight_parameters.body = Messages.create_flight_params_message(Customer)
             await self.send(flight_parameters)
-            print("[CUSTOMER]: Params sent")
+            print("[CUSTOMER]: Params sent: "+flight_parameters.body)
             self.set_next_state(STATE_TWO)
 
     class StateTwo(State):
@@ -40,7 +47,7 @@ class Customer(Agent):
             print("[CUSTOMER]: I'm at state 3")
             customer_decision = Message(to='AASD_REQUEST_HANDLER@01337.io')
             customer_decision.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
-            customer_decision.body = "Decision affirmative"
+            customer_decision.body = Messages.affirmative_decision(Customer)
             await self.send(customer_decision)
             print("[CUSTOMER]: Decision sent")
 
@@ -56,3 +63,5 @@ class Customer(Agent):
         self.customerBehaviour.add_transition(source=STATE_ONE, dest=STATE_TWO)
         self.customerBehaviour.add_transition(source=STATE_TWO, dest=STATE_THREE)
         self.add_behaviour(self.customerBehaviour)
+
+
