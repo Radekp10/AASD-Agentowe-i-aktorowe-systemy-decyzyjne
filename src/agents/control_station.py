@@ -1,6 +1,7 @@
 from spade.agent import Agent
 from spade.behaviour import FSMBehaviour, State
 from spade.message import Message
+import src.Messages as Messages
 
 STATE_ONE = "GET_REQUEST_ABOUT_AVAILABLE_DRONES_STATE"
 STATE_TWO = "SEND_RESPONSE_ABOUT_AVAILABLE_DRONES_STATE"
@@ -31,7 +32,8 @@ class ControlStation(Agent):
             print("[CONTROL_STATION]: I'm at state 2")
             are_drones_available_response = Message(to='AASD_REQUEST_HANDLER@01337.io')
             are_drones_available_response.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
-            are_drones_available_response.body = "Drones available"
+            # are_drones_available_response.body = "Drones available"
+            are_drones_available_response.body = Messages.cs_drones_available_req_message(ControlStation)
             await self.send(are_drones_available_response)
             print("[CONTROL_STATION]: Drones available sent")
             self.set_next_state(STATE_THREE)
