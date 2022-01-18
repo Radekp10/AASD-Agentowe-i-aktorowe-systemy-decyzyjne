@@ -27,7 +27,7 @@ class Customer(Agent):
             print("[CUSTOMER]: I'm at state 1 (initial state)")
             flight_parameters = Message(to='AASD_REQUEST_HANDLER@01337.io')
             flight_parameters.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
-            flight_parameters.body = Messages.create_flight_params_message(Customer)
+            flight_parameters.body = Messages.c_flight_params_message(self.agent)
             await self.send(flight_parameters)
             print("[CUSTOMER]: Params sent: "+flight_parameters.body)
             self.set_next_state(STATE_TWO)
@@ -47,7 +47,7 @@ class Customer(Agent):
             print("[CUSTOMER]: I'm at state 3")
             customer_decision = Message(to='AASD_REQUEST_HANDLER@01337.io')
             customer_decision.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
-            customer_decision.body = Messages.affirmative_decision(Customer)
+            customer_decision.body = Messages.c_affirmative_decision(self.agent)
             await self.send(customer_decision)
             print("[CUSTOMER]: Decision sent")
 

@@ -33,7 +33,7 @@ class ControlStation(Agent):
             are_drones_available_response = Message(to='AASD_REQUEST_HANDLER@01337.io')
             are_drones_available_response.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
             # are_drones_available_response.body = "Drones available"
-            are_drones_available_response.body = Messages.cs_drones_available_req_message(ControlStation)
+            are_drones_available_response.body = Messages.cs_drones_available_req_message(self.agent)
             await self.send(are_drones_available_response)
             print("[CONTROL_STATION]: Drones available sent")
             self.set_next_state(STATE_THREE)
@@ -60,6 +60,7 @@ class ControlStation(Agent):
 
     def __init__(self, jid: str, password: str, verify_security: bool = False):
         super().__init__(jid, password, verify_security)
+        # self.jid = jid
         self.controlStationBehaviour = self.ControlStationBehaviour()
 
     async def setup(self):

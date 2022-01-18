@@ -38,6 +38,7 @@ class Drone(Agent):
 
     def __init__(self, jid: str, password: str, verify_security: bool = False):
         super().__init__(jid, password, verify_security)
+        # self.jid = jid
         self.droneBehaviour = self.DroneBehaviour()
 
     async def setup(self):
