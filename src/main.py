@@ -14,7 +14,7 @@ if __name__ == "__main__":
     customer = Customer("AASD_CUSTOMER@01337.io", "AASD_CUSTOMER")
     requestHandler = RequestHandler("AASD_REQUEST_HANDLER@01337.io", "AASD_REQUEST_HANDLER")
     controlStation = ControlStation("AASD_CONTROL_STATION@01337.io", "AASD_CONTROL_STATION")
-    drone = Drone("AASD_DRONE@01337.io", "AASD_DRONE")
+    drone = Drone("AASD_DRONE@01337.io", "AASD_DRONE", "AASD_CONTROL_STATION@01337.io")
     drones_monitor = DronesMonitor("AASD_DRONES_MONITOR@01337.io", "AASD_DRONES_MONITOR")
     drones_status_sender = DronesStatusSender("AASD_DRONES_STATUS_SENDER@01337.io", "AASD_DRONES_STATUS_SENDER")
     control_station_monitor = ControlStationMonitor("AASD_CONTROL_STATION_MONITOR@01337.io", "AASD_CONTROL_STATION_MONITOR")

@@ -23,14 +23,30 @@ RH_END_RESERVATION = "End station reservation"
 RH_FLIGHT_PARAMETERS = "Flight parameters"
 
 
+# DRONE
+
+def d_on_station(agent: Agent):
+    drone_availability = {
+        "droneId": agent.jid.localpart
+    }
+    return json.dumps(drone_availability, default=str)
 
 
 # CONTROL_STATION
 
-def cs_drones_available_req_message(agent: Agent):
+def cs_is_this_drone_available_req_message(agent: Agent):
+    drones_available_request = {
+        "title": "",
+        "controlStationId": agent.jid.localpart,
+        "createDate": datetime.datetime.now()
+    }
+    return json.dumps(drones_available_request, default=str)
+
+def cs_drones_available_req_message(agent: Agent, droneId: str):
     drones_available_request = {
         "title": "Drones available",
-        "controlStationId": agent.jid,
+        "controlStationId": agent.jid.localpart,
+        "droneId": droneId,
         "createDate": datetime.datetime.now()
     }
     return json.dumps(drones_available_request, default=str)
@@ -38,12 +54,12 @@ def cs_drones_available_req_message(agent: Agent):
 
 # CUSTOMER
 
-def c_flight_params_message(agent: Agent):
+def c_flight_params_message(agent: Agent, startStationId: str, endStationId: str):
     flight_request_params = {
         "title": "Flight parameters",
         "customerId": agent.jid.localpart,
-        "startStationId": str(random.randrange(0, STATIONS_NUMBER, 1)),
-        "endStationId": str(random.randrange(0, STATIONS_NUMBER, 1)),
+        "startStationId": startStationId,
+        "endStationId": endStationId,
         "createDate": datetime.datetime.now()
     }
     return json.dumps(flight_request_params, default=str)
@@ -93,24 +109,27 @@ def rh_flight_proposition_info(agent: Agent, drone_id: str, customer_id: str):
     return json.dumps(proposition, default=str)
 
 
-def rh_start_flight_reservation(agent: Agent, drone_id: str, customer_id: str):
+def rh_start_flight_reservation(agent: Agent, drone_id: str, customer_id: str, start_station_id: str, end_station_id: str):
     reservation = {
         "title": "Start station reservation",
         "requestHandlerId": agent.jid.localpart,
         "droneId": drone_id,
         "customerId": customer_id,
+        "startStationId": start_station_id,
+        "endStationId": end_station_id,
         "reservationStatus": "started",
         "createDate": datetime.datetime.now()
     }
     return json.dumps(reservation, default=str)
 
 
-def rh_end_flight_reservation(agent: Agent, drone_id: str, customer_id: str):
+def rh_end_flight_reservation(agent: Agent, drone_id: str, customer_id: str, end_station_id: str):
     reservation = {
         "title": "End station reservation",
         "requestHandlerId": agent.jid.localpart,
         "droneId": drone_id,
         "customerId": customer_id,
+        "endStationId": end_station_id,
         "reservationStatus": "ended",
         "createDate": datetime.datetime.now()
     }

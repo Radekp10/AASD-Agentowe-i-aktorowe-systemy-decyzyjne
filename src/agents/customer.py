@@ -1,3 +1,5 @@
+import json
+
 from spade.agent import Agent
 from spade.behaviour import FSMBehaviour, State
 from spade.message import Message
@@ -23,11 +25,16 @@ class Customer(Agent):
             print("[CUSTOMER]: Behaviour finished with exit code {}.".format(self.exit_code))
 
     class StateOne(State):
+        def __init__(self):
+            super().__init__()
+            self.startStationId = None
+            self.endStationId = None
+
         async def run(self):
             print("[CUSTOMER]: I'm at state 1 (initial state)")
             flight_parameters = Message(to='AASD_REQUEST_HANDLER@01337.io')
-            flight_parameters.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
-            flight_parameters.body = Messages.c_flight_params_message(self.agent)
+            flight_parameters.set_metadata("performative", "request")  # Set the "inform" FIPA performative
+            flight_parameters.body = Messages.c_flight_params_message(self.agent, self.startStationId, self.endStationId)
             await self.send(flight_parameters)
             print("[CUSTOMER]: Params sent: "+flight_parameters.body)
             self.set_next_state(STATE_TWO)
