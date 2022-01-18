@@ -11,7 +11,6 @@ class ControlStationStatusSender(Agent):
             control_station_status.body = "Control station status ok"
             await self.send(control_station_status)
             print("[CONTROL_STATION_STATUS_SENDER]: Params sent: " + control_station_status.body)
-            self.test = 5
 
         async def on_end(self):
             print("[CONTROL_STATION_STATUS_SENDER]: Send control station status finished with exit code {}.".format(self.exit_code))
@@ -22,10 +21,9 @@ class ControlStationStatusSender(Agent):
 
     def __init__(self, jid: str, password: str, verify_security: bool = False):
         super().__init__(jid, password, verify_security)
-        self.test = 10
 
     async def setup(self):
         print("[CONTROL_STATION_STATUS_SENDER]: Agent starting . I'm agent {}".format(str(self.jid)))
         start_at = datetime.datetime.now()
-        b = self.SendControlStationStatus(period=self.test, start_at=start_at)
+        b = self.SendControlStationStatus(period=10, start_at=start_at)
         self.add_behaviour(b)
