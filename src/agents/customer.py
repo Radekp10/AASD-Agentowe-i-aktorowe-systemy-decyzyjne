@@ -25,10 +25,11 @@ class Customer(Agent):
             print("[CUSTOMER]: Behaviour finished with exit code {}.".format(self.exit_code))
 
     class StateOne(State):
-        def __init__(self):
+        def __init__(self, jid):
             super().__init__()
             self.startStationId = None
             self.endStationId = None
+            self.jid = jid
 
         async def run(self):
             print("[CUSTOMER]: I'm at state 1 (initial state)")
@@ -37,21 +38,43 @@ class Customer(Agent):
             flight_parameters.body = Messages.c_flight_params_message(self.agent, self.startStationId, self.endStationId)
             await self.send(flight_parameters)
             print("[CUSTOMER]: Params sent: "+flight_parameters.body)
+            customer_state_one_msg = Message(to=self.jid)
+            customer_state_one_msg.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
+            customer_state_one_msg.body = "test1"
+            await self.send(customer_state_one_msg)
             self.set_next_state(STATE_TWO)
 
     class StateTwo(State):
+        def __init__(self, jid):
+            super().__init__()
+            self.jid = jid
+
         async def run(self):
             print("[CUSTOMER]: I'm at state 2")
+            customer_state_one_msg = await self.receive(timeout=200)  # wait for a message for 10 seconds
+            if customer_state_one_msg:
+                print("[CUSTOMER]: Message received with content: {}".format(customer_state_one_msg.body))
             flight_proposition = await self.receive(timeout=20)  # wait for a message for 10 seconds
             if flight_proposition:
                 print("[CUSTOMER]: Message received with content: {}".format(flight_proposition.body))
             else:
                 print("[CUSTOMER]: Did not received any message after 10 seconds")
+            customer_state_two_msg = Message(to=self.jid)
+            customer_state_two_msg.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
+            customer_state_two_msg.body = "test2"
+            await self.send(customer_state_two_msg)
             self.set_next_state(STATE_THREE)
 
     class StateThree(State):
+        def __init__(self, jid):
+            super().__init__()
+            self.jid = jid
+
         async def run(self):
             print("[CUSTOMER]: I'm at state 3")
+            customer_state_two_msg = await self.receive(timeout=200)  # wait for a message for 10 seconds
+            if customer_state_two_msg:
+                print("[CUSTOMER]: Message received with content: {}".format(customer_state_two_msg.body))
             customer_decision = Message(to='AASD_REQUEST_HANDLER@01337.io')
             customer_decision.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
             customer_decision.body = Messages.c_affirmative_decision(self.agent)
@@ -64,9 +87,9 @@ class Customer(Agent):
 
     async def setup(self):
         print("[CUSTOMER]: Agent starting . I'm agent {}".format(str(self.jid)))
-        self.customerBehaviour.add_state(name=STATE_ONE, state=self.StateOne(), initial=True)
-        self.customerBehaviour.add_state(name=STATE_TWO, state=self.StateTwo())
-        self.customerBehaviour.add_state(name=STATE_THREE, state=self.StateThree())
+        self.customerBehaviour.add_state(name=STATE_ONE, state=self.StateOne(str(self.jid)), initial=True)
+        self.customerBehaviour.add_state(name=STATE_TWO, state=self.StateTwo(str(self.jid)))
+        self.customerBehaviour.add_state(name=STATE_THREE, state=self.StateThree(str(self.jid)))
         self.customerBehaviour.add_transition(source=STATE_ONE, dest=STATE_TWO)
         self.customerBehaviour.add_transition(source=STATE_TWO, dest=STATE_THREE)
         self.add_behaviour(self.customerBehaviour)
