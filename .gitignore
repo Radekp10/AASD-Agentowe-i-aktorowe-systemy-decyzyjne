@@ -1,4 +1,4 @@
-#.gitignore
+.gitignore
 src/__pycache__/
 src/agents/__pycache__/
 .idea
