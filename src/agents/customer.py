@@ -63,5 +63,3 @@ class Customer(Agent):
         self.customerBehaviour.add_transition(source=STATE_ONE, dest=STATE_TWO)
         self.customerBehaviour.add_transition(source=STATE_TWO, dest=STATE_THREE)
         self.add_behaviour(self.customerBehaviour)
-
-

@@ -1,3 +1,5 @@
+import json
+
 from spade.agent import Agent
 from spade.behaviour import FSMBehaviour, State
 from spade.message import Message
@@ -22,10 +24,21 @@ class RequestHandler(Agent):
             print("[REQUEST_HANDLER]: Behaviour finished with exit code {}.".format(self.exit_code))
 
     class StateOne(State):
+
+        def __init__(self):
+            super().__init__()
+            self.customerId = None
+            self.startStationId = None
+            self.endStationId = None
+
         async def run(self):
             print("[REQUEST_HANDLER]: I'm at state 1")
             flight_parameters = await self.receive(timeout=10)  # wait for a message for 10 seconds
             if flight_parameters:
+                message = json.loads(flight_parameters.body)
+                self.customerId = message['customerId']
+                self.startStationId = message['startStationId']
+                self.endStationId = message['endStationId']
                 print("[REQUEST_HANDLER]: Message received with content: {}".format(flight_parameters.body))
             else:
                 print("[REQUEST_HANDLER]: Did not received any message after 10 seconds")
@@ -36,7 +49,7 @@ class RequestHandler(Agent):
             print("[REQUEST_HANDLER]: I'm at state 2")
             are_drones_available_request = Message(to='AASD_CONTROL_STATION@01337.io')
             are_drones_available_request.set_metadata("performative", "inform")
-            are_drones_available_request.body = Messages.rh_drones_available_request(self.agent, '5', '4')
+            are_drones_available_request.body = Messages.rh_drones_available_request(self.agent, self.startStationId, self.endStationId)
             await self.send(are_drones_available_request)
             print("[REQUEST_HANDLER]: Request about available drones sent")
             self.set_next_state(STATE_THREE)
@@ -56,7 +69,7 @@ class RequestHandler(Agent):
             print("[REQUEST_HANDLER]: I'm at state 4")
             flight_proposition = Message(to='AASD_CUSTOMER@01337.io')
             flight_proposition.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
-            flight_proposition.body = Messages.rh_flight_proposition_info(self.agent, '1', '2')
+            flight_proposition.body = Messages.rh_flight_proposition_info(self.agent, '1', self.customerId)
             await self.send(flight_proposition)
             print("[REQUEST_HANDLER]: Proposition sent")
             self.set_next_state(STATE_FIVE)
@@ -95,14 +108,16 @@ class RequestHandler(Agent):
             print("[REQUEST_HANDLER]: I'm at state 8")
             flight_parameters = Message(to='AASD_DRONE@01337.io')  # wait for a message for 10 seconds
             flight_parameters.set_metadata("performative", "inform")
-            flight_parameters.body = Messages.rh_flight_parameters(self.agent, '1', '2', '3', '4')
+            flight_parameters.body = Messages.rh_flight_parameters(self.agent, '1', self.customerId, '3', '4')
             await self.send(flight_parameters)
             print("[REQUEST_HANDLER]: Flight parameters sent")
 
     def __init__(self, jid: str, password: str, verify_security: bool = False):
         super().__init__(jid, password, verify_security)
-        # self.jid = jid
         self.requestHandlerBehaviour = self.RequestHandlerBehaviour()
+        self.customerId = None
+        self.startStationId = None
+        self.endStationId = None
 
     async def setup(self):
         print("[REQUEST_HANDLER]: Agent starting . I'm agent {}".format(str(self.jid)))
