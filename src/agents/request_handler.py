@@ -39,7 +39,7 @@ class RequestHandler(Agent):
                 endStationId = message['endStationId']
                 print("[REQUEST_HANDLER]: Message received with content: {}".format(flight_parameters.body))
 
-                status_msg = Message(to=self.agent.jid.localpart)
+                status_msg = Message(to=self.agent.jid)
                 status_msg.set_metadata("performative", "inform")
                 status_msg.body = Messages.rh_status(self, startStationId, endStationId, customerId, None)
                 await self.send(status_msg)
@@ -61,7 +61,7 @@ class RequestHandler(Agent):
                 await self.send(are_drones_available_request)
                 print("[REQUEST_HANDLER]: Request about available drones sent")
 
-                status_msg = Message(to=self.agent.jid.localpart)
+                status_msg = Message(to=self.agent.jid)
                 status_msg.set_metadata("performative", "inform")
                 status_msg.body = Messages.rh_status(self, startStationId, endStationId, customerId, None)
                 await self.send(status_msg)
@@ -88,7 +88,7 @@ class RequestHandler(Agent):
                 message = json.loads(are_drones_available_response.body)
                 availableDroneId = message['droneId']
 
-                status_msg = Message(to=self.agent.jid.localpart)
+                status_msg = Message(to=self.agent.jid)
                 status_msg.set_metadata("performative", "inform")
                 status_msg.body = Messages.rh_status(self, startStationId, endStationId, customerId, availableDroneId)
                 await self.send(status_msg)
@@ -116,7 +116,7 @@ class RequestHandler(Agent):
             await self.send(flight_proposition)
             print("[REQUEST_HANDLER]: Proposition sent")
 
-            status_msg = Message(to=self.agent.jid.localpart)
+            status_msg = Message(to=self.agent.jid)
             status_msg.set_metadata("performative", "inform")
             status_msg.body = Messages.rh_status(self, startStationId, endStationId, customerId, droneId)
             await self.send(status_msg)
@@ -139,7 +139,7 @@ class RequestHandler(Agent):
             customer_decision = await self.receive(timeout=10)  # wait for a message for 10 seconds
             if customer_decision:
                 print("[REQUEST_HANDLER]: Message received with content: {}".format(customer_decision.body))
-                status_msg = Message(to=self.agent.jid.localpart)
+                status_msg = Message(to=self.agent.jid)
                 status_msg.set_metadata("performative", "inform")
                 status_msg.body = Messages.rh_status(self, startStationId, endStationId, customerId, droneId)
                 await self.send(status_msg)
@@ -166,7 +166,7 @@ class RequestHandler(Agent):
             reservation_start.body = Messages.rh_start_flight_reservation(self.agent, droneId, customerId,
                                                                           startStationId, endStationId)
             print("[REQUEST_HANDLER]: Start reservation sent")
-            status_msg = Message(to=self.agent.jid.localpart)
+            status_msg = Message(to=self.agent.jid)
             status_msg.set_metadata("performative", "inform")
             status_msg.body = Messages.rh_status(self, startStationId, endStationId, customerId, droneId)
             await self.send(status_msg)
@@ -191,7 +191,7 @@ class RequestHandler(Agent):
             reservation_end.body = Messages.rh_end_flight_reservation(self.agent, droneId, customerId, endStationId)
             await self.send(reservation_end)
             print("[REQUEST_HANDLER]: End reservation sent")
-            status_msg = Message(to=self.agent.jid.localpart)
+            status_msg = Message(to=self.agent.jid)
             status_msg.set_metadata("performative", "inform")
             status_msg.body = Messages.rh_status(self, startStationId, endStationId, customerId, droneId)
             await self.send(status_msg)

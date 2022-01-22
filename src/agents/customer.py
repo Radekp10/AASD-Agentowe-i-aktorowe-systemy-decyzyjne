@@ -39,7 +39,7 @@ class Customer(Agent):
             await self.send(flight_parameters)
             print("[CUSTOMER]: Params sent: "+flight_parameters.body)
 
-            status_msg = Message(to=self.agent.jid.localpart)
+            status_msg = Message(to=self.agent.jid)
             status_msg.set_metadata("performative", "inform")
             status_msg.body = Messages.c_status(self, startStationId, endStationId)
             await self.send(status_msg)
@@ -70,7 +70,7 @@ class Customer(Agent):
             else:
                 print("[CUSTOMER]: Did not received any message after 10 seconds")
 
-            status_msg = Message(to=self.agent.jid.localpart)
+            status_msg = Message(to=self.agent.jid)
             status_msg.set_metadata("performative", "inform")
             status_msg.body = Messages.c_status(self, startStationId, endStationId)
             await self.send(status_msg)
