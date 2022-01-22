@@ -34,6 +34,12 @@ def d_on_station(agent: Agent):
 
 # CONTROL_STATION
 
+def cs_status(agent: Agent, availableDrones: str):
+    status = {
+        availableDrones: availableDrones
+    }
+    return json.dumps(status)
+
 def cs_is_this_drone_available_req_message(agent: Agent):
     drones_available_request = {
         "title": "",
@@ -86,6 +92,16 @@ def c_reject_decision(agent: Agent):
 
 
 # REQUEST_HANDLER
+
+def rh_status(agent: Agent, customer_id: str, start_station_id: str, end_station_id: str, drone_id: str):
+    status = {
+        "title": "Request handler status",
+        "customerId": customer_id,
+        "startStationId": start_station_id,
+        "endStationId": end_station_id,
+        "droneId": drone_id
+    }
+    return json.dumps(status)
 
 def rh_drones_available_request(agent: Agent, start_station_id: str, end_station_id: str):
     request = {

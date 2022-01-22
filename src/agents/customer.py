@@ -59,10 +59,6 @@ class Customer(Agent):
                 print("[CUSTOMER]: Message received with content: {}".format(flight_proposition.body))
             else:
                 print("[CUSTOMER]: Did not received any message after 10 seconds")
-            customer_state_two_msg = Message(to=self.jid)
-            customer_state_two_msg.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
-            customer_state_two_msg.body = "test2"
-            await self.send(customer_state_two_msg)
             self.set_next_state(STATE_THREE)
 
     class StateThree(State):

@@ -5,6 +5,7 @@ from spade.behaviour import FSMBehaviour, State
 from spade.message import Message
 import src.Messages as Messages
 
+STATE_ZERO = "GET_AVAILABILITY_FROM_DRONES"
 STATE_ONE = "GET_REQUEST_ABOUT_AVAILABLE_DRONES_STATE"
 STATE_TWO = "SEND_RESPONSE_ABOUT_AVAILABLE_DRONES_STATE"
 STATE_THREE = "GET_START_RESERVATION_REQUEST_STATE"
@@ -26,6 +27,7 @@ class ControlStation(Agent):
                 message = json.load(available_drones.body)
                 self.availableDrones.push(message['droneId'])
                 print("[CONTROL_STATION]: Message received with content: {}".format(available_drones.body))
+            self.set_next_state(STATE_ONE)
 
     class StateOne(State):
         async def run(self):
