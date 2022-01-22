@@ -11,7 +11,7 @@ from src.agents.drones_monitor import DronesMonitor
 from src.agents.drone import Drone
 
 if __name__ == "__main__":
-    customer = Customer("AASD_CUSTOMER@01337.io", "AASD_CUSTOMER", "AASD_CONTROL_STATION2@01337.io", "AASD_CONTROL_STATION2@01337.io")
+    customer = Customer("AASD_CUSTOMER@01337.io", "AASD_CUSTOMER")
     requestHandler = RequestHandler("AASD_REQUEST_HANDLER@01337.io", "AASD_REQUEST_HANDLER")
     controlStation = ControlStation("AASD_CONTROL_STATION@01337.io", "AASD_CONTROL_STATION")
     controlStation2 = ControlStation("AASD_CONTROL_STATION2@01337.io", "AASD_CONTROL_STATION2")
