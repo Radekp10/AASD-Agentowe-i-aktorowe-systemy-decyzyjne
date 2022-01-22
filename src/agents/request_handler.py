@@ -31,7 +31,7 @@ class RequestHandler(Agent):
 
         async def run(self):
             print("[REQUEST_HANDLER]: I'm at state 1")
-            flight_parameters = await self.receive(timeout=10)  # wait for a message for 10 seconds
+            flight_parameters = await self.receive(timeout=30)  # wait for a message for 10 seconds
             if flight_parameters:
                 message = json.loads(flight_parameters.body)
                 customerId = message['customerId']

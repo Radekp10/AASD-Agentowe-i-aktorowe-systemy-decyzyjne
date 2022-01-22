@@ -60,6 +60,14 @@ def cs_drones_available_req_message(agent: Agent, droneId: str):
 
 # CUSTOMER
 
+def c_status(agent: Agent, startStationId: str, endStationId: str):
+    status = {
+        "title": "status",
+        "startStationId": startStationId,
+        "endStationId": endStationId
+    }
+    return json.dumps(status)
+
 def c_flight_params_message(agent: Agent, startStationId: str, endStationId: str):
     flight_request_params = {
         "title": "Flight parameters",
