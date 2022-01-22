@@ -28,7 +28,7 @@ class ControlStation(Agent):
                 availableDrones = []
                 availableDrones.push(message['droneId'])
                 print("[CONTROL_STATION]: Message received with content: {}".format(available_drones.body))
-                status_msg = Message(to=self.agent.jid)
+                status_msg = Message(to=self.agent.jid.localpart)
                 status_msg.set_metadata("performative", "inform")
                 status_msg.body = Messages.rh_status(self, availableDrones)
             await self.send(status_msg)
@@ -47,7 +47,7 @@ class ControlStation(Agent):
                 print("[CONTROL_STATION]: Message received with content: {}".format(are_drones_available_request.body))
             else:
                 print("[CONTROL_STATION]: Did not received any message after 10 seconds")
-            status_msg = Message(to=self.agent.jid)
+            status_msg = Message(to=self.agent.jid.localpart)
             status_msg.set_metadata("performative", "inform")
             status_msg.body = Messages.rh_status(self, availableDrones)
             await self.send(status_msg)
@@ -66,7 +66,7 @@ class ControlStation(Agent):
             are_drones_available_response.body = Messages.cs_drones_available_req_message(self.agent, self.availableDrones[0])
             await self.send(are_drones_available_response)
             print("[CONTROL_STATION]: Drones available sent")
-            status_msg = Message(to=self.agent.jid)
+            status_msg = Message(to=self.agent.jid.localpart)
             status_msg.set_metadata("performative", "inform")
             status_msg.body = Messages.rh_status(self, availableDrones)
             await self.send(status_msg)
@@ -88,7 +88,7 @@ class ControlStation(Agent):
             else:
                 print("[CONTROL_STATION]: Did not received any message after 10 seconds")
 
-            status_msg = Message(to=self.agent.jid)
+            status_msg = Message(to=self.agent.jid.localpart)
             status_msg.set_metadata("performative", "inform")
             status_msg.body = Messages.rh_status(self, availableDrones)
             await self.send(status_msg)

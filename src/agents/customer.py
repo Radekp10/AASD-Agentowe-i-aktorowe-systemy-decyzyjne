@@ -38,7 +38,7 @@ class Customer(Agent):
             flight_parameters.body = Messages.c_flight_params_message(self.agent, self.startStationId, self.endStationId)
             await self.send(flight_parameters)
             print("[CUSTOMER]: Params sent: "+flight_parameters.body)
-            customer_state_one_msg = Message(to=self.jid)
+            customer_state_one_msg = Message(to=self.jid.localpart)
             customer_state_one_msg.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
             customer_state_one_msg.body = "test1"
             await self.send(customer_state_one_msg)
