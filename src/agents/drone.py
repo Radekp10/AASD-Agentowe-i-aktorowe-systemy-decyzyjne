@@ -28,8 +28,7 @@ class Drone(Agent):
             print("[DRONE]: I'm at state 1 (initial state)")
             flight_parameters = await self.receive(timeout=10)  # wait for a message for 10 seconds
             if flight_parameters:
-                message = json.load(flight_parameters.body)
-                self.plannedControlStationId = message['endStationId']
+                # self.plannedControlStationId = message['endStationId']
                 print("[DRONE]: Message received with content: {}".format(flight_parameters.body))
             else:
                 print("[DRONE]: Did not received any message after 10 seconds")
@@ -43,7 +42,6 @@ class Drone(Agent):
 
     class StateThree(State):
         async def run(self):
-            self.controlStationId = self.plannedControlStationId
             print("[DRONE]: I'm at state 3")
             print("[DRONE]: Flying...")
 
