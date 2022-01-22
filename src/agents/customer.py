@@ -35,7 +35,7 @@ class Customer(Agent):
             endStationId = "AASD_CONTROL_STATION2@01337.io"
             flight_parameters = Message(to='AASD_REQUEST_HANDLER@01337.io')
             flight_parameters.set_metadata("performative", "request")  # Set the "inform" FIPA performative
-            flight_parameters.body = Messages.c_flight_params_message(self.agent, startStationId, endStationId)
+            flight_parameters.body = Messages.c_flight_params_message(self, startStationId, endStationId)
             await self.send(flight_parameters)
             print("[CUSTOMER]: Params sent: "+flight_parameters.body)
 
