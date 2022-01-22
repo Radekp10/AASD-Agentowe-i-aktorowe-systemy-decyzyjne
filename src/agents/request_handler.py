@@ -34,7 +34,6 @@ class RequestHandler(Agent):
             flight_parameters = await self.receive(timeout=30)  # wait for a message for 10 seconds
             if flight_parameters:
                 message = json.loads(flight_parameters.body)
-                print('~~~~~~~~~~~~'+message)
                 customerId = message['customerId']
                 startStationId = message['startStationId']
                 endStationId = message['endStationId']

@@ -41,7 +41,7 @@ class Customer(Agent):
 
             status_msg = Message(to=self.agent.jid.localpart)
             status_msg.set_metadata("performative", "inform")
-            status_msg.body = Messages.rh_status(self, startStationId, endStationId)
+            status_msg.body = Messages.c_status(self, startStationId, endStationId)
             await self.send(status_msg)
 
             self.set_next_state(STATE_TWO)
@@ -72,7 +72,7 @@ class Customer(Agent):
 
             status_msg = Message(to=self.agent.jid.localpart)
             status_msg.set_metadata("performative", "inform")
-            status_msg.body = Messages.rh_status(self, startStationId, endStationId)
+            status_msg.body = Messages.c_status(self, startStationId, endStationId)
             await self.send(status_msg)
             self.set_next_state(STATE_THREE)
 
