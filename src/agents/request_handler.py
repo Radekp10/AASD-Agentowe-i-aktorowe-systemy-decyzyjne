@@ -34,6 +34,7 @@ class RequestHandler(Agent):
             flight_parameters = await self.receive(timeout=30)  # wait for a message for 10 seconds
             if flight_parameters:
                 message = json.loads(flight_parameters.body)
+                print('~~~~~~~~~~~~'+message)
                 customerId = message['customerId']
                 startStationId = message['startStationId']
                 endStationId = message['endStationId']
@@ -43,9 +44,9 @@ class RequestHandler(Agent):
                 status_msg.set_metadata("performative", "inform")
                 status_msg.body = Messages.rh_status(self, startStationId, endStationId, customerId, None)
                 await self.send(status_msg)
+                self.set_next_state(STATE_TWO)
             else:
                 print("[REQUEST_HANDLER]: Did not received any message after 10 seconds")
-            self.set_next_state(STATE_TWO)
 
     class StateTwo(State):
         async def run(self):
@@ -65,7 +66,7 @@ class RequestHandler(Agent):
                 status_msg.set_metadata("performative", "inform")
                 status_msg.body = Messages.rh_status(self, startStationId, endStationId, customerId, None)
                 await self.send(status_msg)
-            self.set_next_state(STATE_THREE)
+                self.set_next_state(STATE_THREE)
 
     class StateThree(State):
         def __init__(self):
@@ -163,9 +164,8 @@ class RequestHandler(Agent):
 
             reservation_start = Message(to='AASD_CONTROL_STATION@01337.io')  # wait for a message for 10 seconds
             reservation_start.set_metadata("performative", "inform")
-            print('~~~~~~~~~~~~~~~~~~~~~~~~' + self.agent, self.droneId, self.customerId, self.startStationId, self.endStationId)
-            reservation_start.body = Messages.rh_start_flight_reservation(self.agent, self.droneId, self.customerId,
-                                                                          self.startStationId, self.endStationId)
+            reservation_start.body = Messages.rh_start_flight_reservation(self.agent, droneId, customerId,
+                                                                          startStationId, endStationId)
             print("[REQUEST_HANDLER]: Start reservation sent")
             status_msg = Message(to=self.agent.jid.localpart)
             status_msg.set_metadata("performative", "inform")
@@ -189,7 +189,7 @@ class RequestHandler(Agent):
 
             reservation_end = Message(to='AASD_CONTROL_STATION@01337.io')  # wait for a message for 10 seconds
             reservation_end.set_metadata("performative", "inform")
-            reservation_end.body = Messages.rh_end_flight_reservation(self.agent, self.droneId, self.customerId, self.endStationId)
+            reservation_end.body = Messages.rh_end_flight_reservation(self.agent, droneId, customerId, endStationId)
             await self.send(reservation_end)
             print("[REQUEST_HANDLER]: End reservation sent")
             status_msg = Message(to=self.agent.jid.localpart)

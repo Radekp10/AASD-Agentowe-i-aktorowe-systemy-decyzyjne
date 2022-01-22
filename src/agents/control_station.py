@@ -119,7 +119,8 @@ class ControlStation(Agent):
 
     async def setup(self):
         print("[CONTROL_STATION]: Agent starting . I'm agent {}".format(str(self.jid)))
-        self.controlStationBehaviour.add_state(name=STATE_ONE, state=self.StateOne(), initial=True)
+        self.controlStationBehaviour.add_state(name=STATE_ZERO, state=self.StateZero(), initial=True)
+        self.controlStationBehaviour.add_state(name=STATE_ONE, state=self.StateOne())
         self.controlStationBehaviour.add_state(name=STATE_TWO, state=self.StateTwo())
         self.controlStationBehaviour.add_state(name=STATE_THREE, state=self.StateThree())
         self.controlStationBehaviour.add_state(name=STATE_FOUR, state=self.StateFour())
