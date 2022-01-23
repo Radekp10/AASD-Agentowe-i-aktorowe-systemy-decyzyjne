@@ -111,12 +111,13 @@ def rh_status(agent: Agent, customer_id: str, start_station_id: str, end_station
     }
     return json.dumps(status)
 
-def rh_drones_available_request(agent: Agent, start_station_id: str, end_station_id: str):
+def rh_drones_available_request(agent: Agent, start_station_id: str, end_station_id: str, customer_id: str):
     request = {
         "title": "Are drones available?",
         "requestHandlerId": agent.jid.localpart,
         "startStationId": start_station_id,
         "endStationId": end_station_id,
+        "customerId": customer_id,
         "createDate": datetime.datetime.now()
     }
     return json.dumps(request, default=str)

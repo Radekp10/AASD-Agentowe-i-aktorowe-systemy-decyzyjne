@@ -10,6 +10,7 @@ STATE_ONE = "GET_REQUEST_ABOUT_AVAILABLE_DRONES_STATE"
 STATE_TWO = "SEND_RESPONSE_ABOUT_AVAILABLE_DRONES_STATE"
 STATE_THREE = "GET_START_RESERVATION_REQUEST_STATE"
 STATE_FOUR = "GET_END_RESERVATION_REQUEST_STATE"
+STATE_FIVE = "WAITING"
 
 
 class ControlStation(Agent):
@@ -22,25 +23,29 @@ class ControlStation(Agent):
 
     class StateZero(State):
         async def run(self):
-            available_drones = await self.receive(timeout=10)  # wait for a message for 10 seconds
-            if available_drones:
-                message = json.load(available_drones.body)
-                availableDrones = []
-                availableDrones.push(message['droneId'])
-                print("[CONTROL_STATION]: Message received with content: {}".format(available_drones.body))
-                status_msg = Message(to=self.agent.jid.localpart)
-                status_msg.set_metadata("performative", "inform")
-                status_msg.body = Messages.cs_status(self, availableDrones)
-            await self.send(status_msg)
+            if self.agent.jid.localpart == "AASD_CONTROL_STATION2@01337.io":
+                self.set_next_state(STATE_FIVE)
+
+            #available_drones = await self.receive(timeout=20)  # wait for a message for 10 seconds
+            #if available_drones:
+            #message = json.load(available_drones.body)
+            # availableDrones = []
+            # availableDrones.push(message['droneId'])
+            #print("[CONTROL_STATION]: Message received with content: {}".format(available_drones.body))
+            status_msg_control1 = Message(to="AASD_CONTROL_STATION@01337.io")
+            status_msg_control1.set_metadata("performative", "inform")
+            status_msg_control1.body = Messages.cs_status(self, "AASD_DRONE@01337.io")
+            await self.send(status_msg_control1)
+
             self.set_next_state(STATE_ONE)
 
     class StateOne(State):
         async def run(self):
             print("[CONTROL_STATION]: I'm at state 1 (initial state)")
-            status = await self.receive(timeout=20)
+            status_msg_control1 = await self.receive(timeout=20)
             availableDrones = None
-            if status:
-                availableDrones = status['availableDrones']
+            if status_msg_control1:
+                availableDrones = status_msg_control1.body
 
             are_drones_available_request = await self.receive(timeout=10)  # wait for a message for 10 seconds
             if are_drones_available_request:
@@ -112,6 +117,10 @@ class ControlStation(Agent):
                 print("[CONTROL_STATION]: Did not received any message after 10 seconds")
             print("[CONTROL_STATION]: End reservation made")
 
+    class StateFive(State):
+        async def run(self):
+            print("[CONTROL_STATION2]: Waiting")
+
     def __init__(self, jid: str, password: str, verify_security: bool = False):
         super().__init__(jid, password, verify_security)
         self.controlStationBehaviour = self.ControlStationBehaviour()
@@ -124,7 +133,10 @@ class ControlStation(Agent):
         self.controlStationBehaviour.add_state(name=STATE_TWO, state=self.StateTwo())
         self.controlStationBehaviour.add_state(name=STATE_THREE, state=self.StateThree())
         self.controlStationBehaviour.add_state(name=STATE_FOUR, state=self.StateFour())
+        self.controlStationBehaviour.add_state(name=STATE_FIVE, state=self.StateFive())
+        self.controlStationBehaviour.add_transition(source=STATE_ZERO, dest=STATE_ONE)
         self.controlStationBehaviour.add_transition(source=STATE_ONE, dest=STATE_TWO)
         self.controlStationBehaviour.add_transition(source=STATE_TWO, dest=STATE_THREE)
         self.controlStationBehaviour.add_transition(source=STATE_THREE, dest=STATE_FOUR)
+        self.controlStationBehaviour.add_transition(source=STATE_ZERO, dest=STATE_FIVE)
         self.add_behaviour(self.controlStationBehaviour)

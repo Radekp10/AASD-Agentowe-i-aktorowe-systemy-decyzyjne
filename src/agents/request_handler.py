@@ -26,8 +26,9 @@ class RequestHandler(Agent):
 
     class StateOne(State):
 
-        def __init__(self):
+        def __init__(self, jid):
             super().__init__()
+            self.jid = jid
 
         async def run(self):
             print("[REQUEST_HANDLER]: I'm at state 1")
@@ -38,38 +39,42 @@ class RequestHandler(Agent):
                 startStationId = message['startStationId']
                 endStationId = message['endStationId']
                 print("[REQUEST_HANDLER]: Message received with content: {}".format(flight_parameters.body))
-
-                status_msg = Message(to=self.agent.jid.localpart)
-                status_msg.set_metadata("performative", "inform")
-                status_msg.body = Messages.rh_status(self, startStationId, endStationId, customerId, None)
-                await self.send(status_msg)
+                status_msg_req = Message(to=self.jid)
+                status_msg_req.set_metadata("performative", "inform")
+                status_msg_req.body = Messages.rh_status(self, customerId, startStationId, endStationId, None)
+                await self.send(status_msg_req)
                 self.set_next_state(STATE_TWO)
             else:
                 print("[REQUEST_HANDLER]: Did not received any message after 10 seconds")
 
     class StateTwo(State):
+        def __init__(self, jid):
+            super().__init__()
+            self.jid = jid
+
         async def run(self):
             print("[REQUEST_HANDLER]: I'm at state 2")
-            status = await self.receive(timeout=20)
-            if status:
-                customerId = status['customerId']
-                startStationId = status['startStationId']
-                endStationId = status['endStationId']
-                are_drones_available_request = Message(to='AASD_CONTROL_STATION@01337.io')
+            status_msg_req = await self.receive(timeout=20)
+            if status_msg_req:
+                message = json.loads(status_msg_req.body)
+                customerId = message['customerId']
+                startStationId = message['startStationId']
+                endStationId = message['endStationId']
+                are_drones_available_request = Message(to="AASD_CONTROL_STATION@01337.io")
                 are_drones_available_request.set_metadata("performative", "inform")
-                are_drones_available_request.body = Messages.rh_drones_available_request(self, startStationId, endStationId, customerId, None)
+                are_drones_available_request.body = Messages.rh_drones_available_request(self, startStationId, endStationId, customerId)
                 await self.send(are_drones_available_request)
                 print("[REQUEST_HANDLER]: Request about available drones sent")
-
-                status_msg = Message(to=self.agent.jid.localpart)
+                status_msg = Message(to=self.jid)
                 status_msg.set_metadata("performative", "inform")
                 status_msg.body = Messages.rh_status(self, startStationId, endStationId, customerId, None)
                 await self.send(status_msg)
                 self.set_next_state(STATE_THREE)
 
     class StateThree(State):
-        def __init__(self):
+        def __init__(self, jid):
             super().__init__()
+            self.jid = jid
 
         async def run(self):
             print("[REQUEST_HANDLER]: I'm at state 3")
@@ -97,6 +102,10 @@ class RequestHandler(Agent):
                 print("[REQUEST_HANDLER]: Did not received any message after 10 seconds")
 
     class StateFour(State):
+        def __init__(self, jid):
+            super().__init__()
+            self.jid = jid
+
         async def run(self):
             print("[REQUEST_HANDLER]: I'm at state 4")
             status = await self.receive(timeout=20)
@@ -123,6 +132,10 @@ class RequestHandler(Agent):
             self.set_next_state(STATE_FIVE)
 
     class StateFive(State):
+        def __init__(self, jid):
+            super().__init__()
+            self.jid = jid
+
         async def run(self):
             print("[REQUEST_HANDLER]: I'm at state 5")
             status = await self.receive(timeout=20)
@@ -148,6 +161,10 @@ class RequestHandler(Agent):
                 print("[REQUEST_HANDLER]: Did not received any message after 10 seconds")
 
     class StateSix(State):
+        def __init__(self, jid):
+            super().__init__()
+            self.jid = jid
+
         async def run(self):
             print("[REQUEST_HANDLER]: I'm at state 6")
             status = await self.receive(timeout=20)
@@ -173,6 +190,10 @@ class RequestHandler(Agent):
             self.set_next_state(STATE_SEVEN)
 
     class StateSeven(State):
+        def __init__(self, jid):
+            super().__init__()
+            self.jid = jid
+
         async def run(self):
             print("[REQUEST_HANDLER]: I'm at state 7")
             status = await self.receive(timeout=20)
@@ -198,6 +219,10 @@ class RequestHandler(Agent):
             self.set_next_state(STATE_EIGHT)
 
     class StateEight(State):
+        def __init__(self, jid):
+            super().__init__()
+            self.jid = jid
+
         async def run(self):
             print("[REQUEST_HANDLER]: I'm at state 8")
             status = await self.receive(timeout=20)
@@ -226,14 +251,14 @@ class RequestHandler(Agent):
 
     async def setup(self):
         print("[REQUEST_HANDLER]: Agent starting . I'm agent {}".format(str(self.jid)))
-        self.requestHandlerBehaviour.add_state(name=STATE_ONE, state=self.StateOne(), initial=True)
-        self.requestHandlerBehaviour.add_state(name=STATE_TWO, state=self.StateTwo())
-        self.requestHandlerBehaviour.add_state(name=STATE_THREE, state=self.StateThree())
-        self.requestHandlerBehaviour.add_state(name=STATE_FOUR, state=self.StateFour())
-        self.requestHandlerBehaviour.add_state(name=STATE_FIVE, state=self.StateFive())
-        self.requestHandlerBehaviour.add_state(name=STATE_SIX, state=self.StateSix())
-        self.requestHandlerBehaviour.add_state(name=STATE_SEVEN, state=self.StateSeven())
-        self.requestHandlerBehaviour.add_state(name=STATE_EIGHT, state=self.StateEight())
+        self.requestHandlerBehaviour.add_state(name=STATE_ONE, state=self.StateOne(str(self.jid)), initial=True)
+        self.requestHandlerBehaviour.add_state(name=STATE_TWO, state=self.StateTwo(str(self.jid)))
+        self.requestHandlerBehaviour.add_state(name=STATE_THREE, state=self.StateThree(str(self.jid)))
+        self.requestHandlerBehaviour.add_state(name=STATE_FOUR, state=self.StateFour(str(self.jid)))
+        self.requestHandlerBehaviour.add_state(name=STATE_FIVE, state=self.StateFive(str(self.jid)))
+        self.requestHandlerBehaviour.add_state(name=STATE_SIX, state=self.StateSix(str(self.jid)))
+        self.requestHandlerBehaviour.add_state(name=STATE_SEVEN, state=self.StateSeven(str(self.jid)))
+        self.requestHandlerBehaviour.add_state(name=STATE_EIGHT, state=self.StateEight(str(self.jid)))
         self.requestHandlerBehaviour.add_transition(source=STATE_ONE, dest=STATE_TWO)
         self.requestHandlerBehaviour.add_transition(source=STATE_TWO, dest=STATE_THREE)
         self.requestHandlerBehaviour.add_transition(source=STATE_THREE, dest=STATE_FOUR)
