@@ -151,14 +151,15 @@ class RequestHandler(Agent):
 
     async def setup(self):
         print("[REQUEST_HANDLER]: Agent starting . I'm agent {}".format(str(self.jid)))
-        self.requestHandlerBehaviour.add_state(name=STATE_ONE, state=self.StateOne(str(self.jid)), initial=True)
-        self.requestHandlerBehaviour.add_state(name=STATE_TWO, state=self.StateTwo(str(self.jid)))
-        self.requestHandlerBehaviour.add_state(name=STATE_THREE, state=self.StateThree(str(self.jid)))
-        self.requestHandlerBehaviour.add_state(name=STATE_FOUR, state=self.StateFour(str(self.jid)))
-        self.requestHandlerBehaviour.add_state(name=STATE_FIVE, state=self.StateFive(str(self.jid)))
-        self.requestHandlerBehaviour.add_state(name=STATE_SIX, state=self.StateSix(str(self.jid)))
-        self.requestHandlerBehaviour.add_state(name=STATE_SEVEN, state=self.StateSeven(str(self.jid)))
-        self.requestHandlerBehaviour.add_state(name=STATE_EIGHT, state=self.StateEight(str(self.jid)))
+        self.requestHandlerBehaviour.add_state(name=STATE_ONE, state=self.StateOne(self.jid), initial=True)
+        self.requestHandlerBehaviour.add_state(name=STATE_TWO, state=self.StateTwo(self.jid))
+        self.requestHandlerBehaviour.add_state(name=STATE_THREE, state=self.StateThree(self.jid))
+        self.requestHandlerBehaviour.add_state(name=STATE_FOUR, state=self.StateFour(self.jid))
+        self.requestHandlerBehaviour.add_state(name=STATE_FIVE, state=self.StateFive(self.jid))
+        self.requestHandlerBehaviour.add_state(name=STATE_SIX, state=self.StateSix(self.jid))
+        self.requestHandlerBehaviour.add_state(name=STATE_SEVEN, state=self.StateSeven(self.jid))
+        self.requestHandlerBehaviour.add_state(name=STATE_EIGHT, state=self.StateEight(self.jid))
+
         self.requestHandlerBehaviour.add_transition(source=STATE_ONE, dest=STATE_TWO)
         self.requestHandlerBehaviour.add_transition(source=STATE_TWO, dest=STATE_THREE)
         self.requestHandlerBehaviour.add_transition(source=STATE_THREE, dest=STATE_FOUR)

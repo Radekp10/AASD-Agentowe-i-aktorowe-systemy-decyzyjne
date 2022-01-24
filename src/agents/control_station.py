@@ -26,6 +26,10 @@ class ControlStation(Agent):
     class StateZero(State):
         async def run(self):
             print("[CONTROL_STATION]: I'm at state 0 (initial state)")
+            available_drones = await self.receive(timeout=10)  # wait for a message for 10 seconds
+            if available_drones:
+                message = json.load(available_drones.body)
+                AVAILABLE_DRONES = message['droneId']
             if self.agent.jid.localpart == "AASD_CONTROL_STATION2@01337.io":
                 self.set_next_state(STATE_FIVE)
             self.set_next_state(STATE_ONE)
@@ -33,6 +37,8 @@ class ControlStation(Agent):
     class StateOne(State):
         async def run(self):
             print("[CONTROL_STATION]: I'm at state 1")
+
+
 
             are_drones_available_request = await self.receive(timeout=10)  # wait for a message for 10 seconds
             if are_drones_available_request:

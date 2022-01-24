@@ -28,7 +28,6 @@ class Drone(Agent):
             print("[DRONE]: I'm at state 1 (initial state)")
             flight_parameters = await self.receive(timeout=30)  # wait for a message for 10 seconds
             if flight_parameters:
-                # self.plannedControlStationId = message['endStationId']
                 print("[DRONE]: Message received with content: {}".format(flight_parameters.body))
             else:
                 print("[DRONE]: Did not received any message after 10 seconds")
