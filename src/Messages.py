@@ -1,6 +1,5 @@
 import datetime
 import json
-import random
 
 from spade.agent import Agent
 

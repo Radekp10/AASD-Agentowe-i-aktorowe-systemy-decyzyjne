@@ -9,6 +9,8 @@ STATE_ONE = "GIVE_REQUIREMENTS_STATE"
 STATE_TWO = "GET_FLIGHT_PROPOSITION_STATE"
 STATE_THREE = "GIVE_DECISION_STATE"
 
+START_STATION_ID = "AASD_CONTROL_STATION@01337.io"
+END_STATION_ID = "AASD_CONTROL_STATION2@01337.io"
 STATIONS_NUMBER = 20
 
 class Customer(Agent):
@@ -31,18 +33,11 @@ class Customer(Agent):
 
         async def run(self):
             print("[CUSTOMER]: I'm at state 1 (initial state)")
-            startStationId = "AASD_CONTROL_STATION2@01337.io"
-            endStationId = "AASD_CONTROL_STATION2@01337.io"
             flight_parameters = Message(to='AASD_REQUEST_HANDLER@01337.io')
             flight_parameters.set_metadata("performative", "request")  # Set the "inform" FIPA performative
-            flight_parameters.body = Messages.c_flight_params_message(self.agent, startStationId, endStationId)
+            flight_parameters.body = Messages.c_flight_params_message(self.agent, START_STATION_ID, END_STATION_ID)
             await self.send(flight_parameters)
             print("[CUSTOMER]: Params sent: "+flight_parameters.body)
-
-            status_msg = Message(to=self.agent.jid.localpart)
-            status_msg.set_metadata("performative", "inform")
-            status_msg.body = Messages.c_status(self.agent, startStationId, endStationId)
-            await self.send(status_msg)
 
             self.set_next_state(STATE_TWO)
 
@@ -54,13 +49,6 @@ class Customer(Agent):
         async def run(self):
             print("[CUSTOMER]: I'm at state 2")
 
-            status = await self.receive(timeout=20)
-            startStationId = None
-            endStationId = None
-            if status:
-                startStationId = status['startStationId']
-                endStationId = status['endStationId']
-
             customer_state_one_msg = await self.receive(timeout=200)  # wait for a message for 10 seconds
             if customer_state_one_msg:
                 print("[CUSTOMER]: Message received with content: {}".format(customer_state_one_msg.body))
@@ -69,11 +57,6 @@ class Customer(Agent):
                 print("[CUSTOMER]: Message received with content: {}".format(flight_proposition.body))
             else:
                 print("[CUSTOMER]: Did not received any message after 10 seconds")
-
-            status_msg = Message(to=self.agent.jid.localpart)
-            status_msg.set_metadata("performative", "inform")
-            status_msg.body = Messages.c_status(self, startStationId, endStationId)
-            await self.send(status_msg)
             self.set_next_state(STATE_THREE)
 
     class StateThree(State):
@@ -83,13 +66,6 @@ class Customer(Agent):
 
         async def run(self):
             print("[CUSTOMER]: I'm at state 3")
-
-            status = await self.receive(timeout=20)
-            startStationId = None
-            endStationId = None
-            if status:
-                startStationId = status['startStationId']
-                endStationId = status['endStationId']
 
             customer_state_two_msg = await self.receive(timeout=200)  # wait for a message for 10 seconds
             if customer_state_two_msg:
