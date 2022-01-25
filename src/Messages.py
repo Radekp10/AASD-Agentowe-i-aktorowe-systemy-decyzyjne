@@ -1,6 +1,5 @@
 import datetime
 import json
-import random
 
 from spade.agent import Agent
 
@@ -34,6 +33,12 @@ def d_on_station(agent: Agent):
 
 # CONTROL_STATION
 
+def cs_status(agent: Agent, availableDrones: str):
+    status = {
+        availableDrones: availableDrones
+    }
+    return json.dumps(status)
+
 def cs_is_this_drone_available_req_message(agent: Agent):
     drones_available_request = {
         "title": "",
@@ -53,6 +58,14 @@ def cs_drones_available_req_message(agent: Agent, droneId: str):
 
 
 # CUSTOMER
+
+def c_status(agent: Agent, startStationId: str, endStationId: str):
+    status = {
+        "title": "status",
+        "startStationId": startStationId,
+        "endStationId": endStationId
+    }
+    return json.dumps(status)
 
 def c_flight_params_message(agent: Agent, startStationId: str, endStationId: str):
     flight_request_params = {
@@ -87,12 +100,23 @@ def c_reject_decision(agent: Agent):
 
 # REQUEST_HANDLER
 
-def rh_drones_available_request(agent: Agent, start_station_id: str, end_station_id: str):
+def rh_status(agent: Agent, customer_id: str, start_station_id: str, end_station_id: str, drone_id: str):
+    status = {
+        "title": "Request handler status",
+        "customerId": customer_id,
+        "startStationId": start_station_id,
+        "endStationId": end_station_id,
+        "droneId": drone_id
+    }
+    return json.dumps(status)
+
+def rh_drones_available_request(agent: Agent, start_station_id: str, end_station_id: str, customer_id: str):
     request = {
         "title": "Are drones available?",
         "requestHandlerId": agent.jid.localpart,
         "startStationId": start_station_id,
         "endStationId": end_station_id,
+        "customerId": customer_id,
         "createDate": datetime.datetime.now()
     }
     return json.dumps(request, default=str)
