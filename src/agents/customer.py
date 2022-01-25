@@ -49,9 +49,6 @@ class Customer(Agent):
         async def run(self):
             print("[CUSTOMER]: I'm at state 2")
 
-            customer_state_one_msg = await self.receive(timeout=200)  # wait for a message for 10 seconds
-            if customer_state_one_msg:
-                print("[CUSTOMER]: Message received with content: {}".format(customer_state_one_msg.body))
             flight_proposition = await self.receive(timeout=20)  # wait for a message for 10 seconds
             if flight_proposition:
                 print("[CUSTOMER]: Message received with content: {}".format(flight_proposition.body))

@@ -40,11 +40,13 @@ class ControlStation(Agent):
 
 
 
-            are_drones_available_request = await self.receive(timeout=10)  # wait for a message for 10 seconds
+            are_drones_available_request = await self.receive(timeout=60)  # wait for a message for 10 seconds
             if are_drones_available_request:
-                print("[CONTROL_STATION]: Message received with content: {}".format(are_drones_available_request.body))
+                message = json.load(are_drones_available_request)
+                print("[CONTROL_STATION]: Message received with content: {}".format(message.body['title']))
+                # print("[CONTROL_STATION]: Message received with content: {}".format(are_drones_available_request.body))
             else:
-                print("[CONTROL_STATION]: Did not received any message after 10 seconds")
+                print("[CONTROL_STATION]: Did not received any message after 60 seconds")
             self.set_next_state(STATE_TWO)
 
     class StateTwo(State):
@@ -64,7 +66,7 @@ class ControlStation(Agent):
             if start_reservation_request:
                 message = json.load(start_reservation_request.body)
                 AVAILABLE_DRONES.replace(self, message['droneId'], '')
-                print("[CONTROL_STATION]: Message received with content: {}".format(start_reservation_request.body))
+                print("[CONTROL_STATION]: Message received with content: {}".format(start_reservation_request.body['title']))
             else:
                 print("[CONTROL_STATION]: Did not received any message after 10 seconds")
             print("[CONTROL_STATION]: Start reservation made")
@@ -77,7 +79,7 @@ class ControlStation(Agent):
             if end_reservation_request:
                 message = json.load(end_reservation_request.body)
                 # AVAILABLE_DRONES = "%a, %b" %(AVAILABLE_DRONES, message['droneId'])
-                print("[CONTROL_STATION]: Message received with content: {}".format(end_reservation_request.body))
+                print("[CONTROL_STATION]: Message received with content: {}".format(end_reservation_request.body['title']))
             else:
                 print("[CONTROL_STATION]: Did not received any message after 10 seconds")
             print("[CONTROL_STATION]: End reservation made")
