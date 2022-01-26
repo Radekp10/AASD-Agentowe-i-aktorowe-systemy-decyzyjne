@@ -23,9 +23,12 @@ RH_FLIGHT_PARAMETERS = "Flight parameters"
 
 
 # DRONE
+D_DRONE_AVAILABLE = "I'm drone and I'm available"
+
 
 def d_on_station(agent: Agent):
     drone_availability = {
+        "title": D_DRONE_AVAILABLE,
         "droneId": agent.jid.localpart
     }
     return json.dumps(drone_availability, default=str)
@@ -112,7 +115,7 @@ def rh_status(agent: Agent, customer_id: str, start_station_id: str, end_station
 
 def rh_drones_available_request(agent: Agent, start_station_id: str, end_station_id: str, customer_id: str):
     request = {
-        "title": "Are drones available?",
+        "title": RH_RQ_DRONES_AVAILABLE,
         "requestHandlerId": agent.jid.localpart,
         "startStationId": start_station_id,
         "endStationId": end_station_id,
@@ -149,7 +152,7 @@ def rh_start_flight_reservation(agent: Agent, drone_id: str, customer_id: str, s
 
 def rh_end_flight_reservation(agent: Agent, drone_id: str, customer_id: str, end_station_id: str):
     reservation = {
-        "title": "End station reservation",
+        "title": RH_END_RESERVATION,
         "requestHandlerId": agent.jid.localpart,
         "droneId": drone_id,
         "customerId": customer_id,

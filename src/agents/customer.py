@@ -1,5 +1,3 @@
-import json
-import time
 from spade.agent import Agent
 from spade.behaviour import FSMBehaviour, State
 from spade.message import Message
@@ -12,6 +10,7 @@ STATE_THREE = "GIVE_DECISION_STATE"
 START_STATION_ID = "AASD_CONTROL_STATION@01337.io"
 END_STATION_ID = "AASD_CONTROL_STATION2@01337.io"
 STATIONS_NUMBER = 20
+
 
 class Customer(Agent):
 
@@ -49,7 +48,7 @@ class Customer(Agent):
         async def run(self):
             print("[CUSTOMER]: I'm at state 2")
 
-            flight_proposition = await self.receive(timeout=20)  # wait for a message for 10 seconds
+            flight_proposition = await self.receive(timeout=30)  # wait for a message for 10 seconds
             if flight_proposition:
                 print("[CUSTOMER]: Message received with content: {}".format(flight_proposition.body))
             else:
@@ -63,10 +62,6 @@ class Customer(Agent):
 
         async def run(self):
             print("[CUSTOMER]: I'm at state 3")
-
-            customer_state_two_msg = await self.receive(timeout=200)  # wait for a message for 10 seconds
-            if customer_state_two_msg:
-                print("[CUSTOMER]: Message received with content: {}".format(customer_state_two_msg.body))
             customer_decision = Message(to='AASD_REQUEST_HANDLER@01337.io')
             customer_decision.set_metadata("performative", "inform")  # Set the "inform" FIPA performative
             customer_decision.body = Messages.c_affirmative_decision(self.agent)

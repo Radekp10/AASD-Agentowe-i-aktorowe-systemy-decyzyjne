@@ -2,6 +2,7 @@ from spade.agent import Agent
 from spade.behaviour import CyclicBehaviour, PeriodicBehaviour
 from spade.message import Message
 
+
 class ControlStationMonitor(Agent):
     class GetControlStationStatus(CyclicBehaviour):
         async def run(self):

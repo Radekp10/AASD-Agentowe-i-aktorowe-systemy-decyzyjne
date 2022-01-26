@@ -21,20 +21,27 @@ if __name__ == "__main__":
     # control_station_monitor = ControlStationMonitor("AASD_CONTROL_STATION_MONITOR@01337.io", "AASD_CONTROL_STATION_MONITOR")
     # control_station_status_sender = ControlStationStatusSender("AASD_CONTROL_STATION_STATUS_SENDER@01337.io", "AASD_CONTROL_STATION_STATUS_SENDER")
 
-    request_handler_future = requestHandler.start()
-    time.sleep(5)
-    customer_future = customer.start()
     control_station_future = controlStation.start()
+    time.sleep(2)
+    control_station2_future = controlStation2.start()
+    time.sleep(2)
     drone_future = drone.start()
+
+    time.sleep(3)
+    request_handler_future = requestHandler.start()
+    time.sleep(2)
+    customer_future = customer.start()
     # drones_monitor_future = drones_monitor.start()
     # drones_status_sender_future = drones_status_sender.start()
     # control_station_monitor_future = control_station_monitor.start()
     # control_station_status_sender_future = control_station_status_sender.start()
 
-    request_handler_future.result()
-    customer_future.result()  # Wait until the start method is finished
+    #time.sleep(5)
     control_station_future.result()
+    control_station2_future.result()
+    request_handler_future.result()
     drone_future.result()
+    customer_future.result()  # Wait until the start method is finished
     # drones_monitor_future.result()
     # drones_status_sender_future.result()
     # control_station_monitor_future.result()
@@ -47,6 +54,7 @@ if __name__ == "__main__":
             requestHandler.stop()
             customer.stop()
             controlStation.stop()
+            controlStation2.stop()
             drone.stop()
             break
     print("Agents finished")
