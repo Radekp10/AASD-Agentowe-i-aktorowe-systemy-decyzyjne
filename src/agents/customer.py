@@ -51,9 +51,10 @@ class Customer(Agent):
             flight_proposition = await self.receive(timeout=30)  # wait for a message for 10 seconds
             if flight_proposition:
                 print("[CUSTOMER]: Message received with content: {}".format(flight_proposition.body))
+                self.set_next_state(STATE_THREE)
             else:
                 print("[CUSTOMER]: Did not received any message after 10 seconds")
-            self.set_next_state(STATE_THREE)
+                self.set_next_state(STATE_TWO)
 
     class StateThree(State):
         def __init__(self, jid):
@@ -79,4 +80,5 @@ class Customer(Agent):
         self.customerBehaviour.add_state(name=STATE_THREE, state=self.StateThree(str(self.jid)))
         self.customerBehaviour.add_transition(source=STATE_ONE, dest=STATE_TWO)
         self.customerBehaviour.add_transition(source=STATE_TWO, dest=STATE_THREE)
+        self.customerBehaviour.add_transition(source=STATE_TWO, dest=STATE_TWO)
         self.add_behaviour(self.customerBehaviour)

@@ -78,6 +78,7 @@ class RequestHandler(Agent):
                 self.set_next_state(STATE_FOUR)
             else:
                 print(f"[{self.agent.jid.localpart}]: Did not received any message after 100 seconds")
+                self.set_next_state(STATE_THREE)
 
     class StateFour(State):
         def __init__(self, jid):
@@ -106,6 +107,7 @@ class RequestHandler(Agent):
                 self.set_next_state(STATE_SIX)
             else:
                 print(f"[{self.agent.jid.localpart}]: Did not received any message after 10 seconds")
+                self.set_next_state(STATE_FIVE)
 
     class StateSix(State):
         def __init__(self, jid):
@@ -175,4 +177,6 @@ class RequestHandler(Agent):
         self.requestHandlerBehaviour.add_transition(source=STATE_SEVEN, dest=STATE_EIGHT)
         self.requestHandlerBehaviour.add_transition(source=STATE_EIGHT, dest=STATE_ONE)
         self.requestHandlerBehaviour.add_transition(source=STATE_ONE, dest=STATE_ONE)
+        self.requestHandlerBehaviour.add_transition(source=STATE_THREE, dest=STATE_THREE)
+        self.requestHandlerBehaviour.add_transition(source=STATE_FIVE, dest=STATE_FIVE)
         self.add_behaviour(self.requestHandlerBehaviour)

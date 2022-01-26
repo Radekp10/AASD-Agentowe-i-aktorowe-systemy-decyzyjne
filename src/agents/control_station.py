@@ -49,9 +49,10 @@ class ControlStation(Agent):
             if are_drones_available_request and json.loads(are_drones_available_request.body)['title'] == Messages.RH_RQ_DRONES_AVAILABLE:
                 message = json.loads(are_drones_available_request.body)
                 print(f"[{self.agent.jid.localpart}]: Message received with content: {message['title']}")
+                self.set_next_state(STATE_TWO)
             else:
                 print(f"[{self.agent.jid.localpart}]: Did not received any message after 60 seconds")
-            self.set_next_state(STATE_TWO)
+                self.set_next_state(STATE_ONE)
 
     class StateTwo(State):
         async def run(self):
@@ -108,5 +109,6 @@ class ControlStation(Agent):
         # self.controlStationBehaviour.add_transition(source=STATE_ZERO, dest=STATE_FOUR)
         self.controlStationBehaviour.add_transition(source=STATE_ZERO, dest=STATE_ZERO)
         self.controlStationBehaviour.add_transition(source=STATE_THREE, dest=STATE_ZERO)
+        self.controlStationBehaviour.add_transition(source=STATE_ONE, dest=STATE_ONE)
         # self.controlStationBehaviour.add_transition(source=STATE_FOUR, dest=STATE_ZERO)
         self.add_behaviour(self.controlStationBehaviour)
